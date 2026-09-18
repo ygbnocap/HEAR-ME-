@@ -1,0 +1,46 @@
+name: hear_me
+description: Игра по мотивам шоу "Громкий вопрос"
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_picker: ^11.0.2
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - ./assets/packs/built_in/default001.hmq
+    - ./assets/packs/built_in/warmup.hmq
+    - ./assets/packs/built_in/riddles_facts.hmq
+    - ./assets/packs/built_in/stars_screen.hmq
+    - ./assets/packs/built_in/odd_questions.hmq
+    - ./assets/packs/built_in/history_geo.hmq
+    - ./assets/packs/built_in/erudite.hmq
+    - ./assets/packs/built_in/default002.hmq
+    - ./assets/packs/built_in/default003.hmq
+    - ./assets/packs/built_in/default004.hmq
+
+linter:
+  rules:
+    avoid_using_root_bundle: false
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21 # опционально
