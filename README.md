@@ -40,7 +40,7 @@
 
 ### Сборка
 ```bash
-git clone https://github.com/ygbnocap/hear_me.git
+git clone https://github.com/ygbnocap/HEAR-ME-.git
 cd hear_me
 flutter pub get
 flutter run
@@ -173,7 +173,7 @@ A digital version of a party board game inspired by the "Loud Question" show by 
 
 ### Build
 ```bash
-git clone https://github.com/ygbnocap/hear_me.git
+git clone https://github.com/ygbnocap/HEAR-ME-.git
 cd hear_me
 flutter pub get
 flutter run
