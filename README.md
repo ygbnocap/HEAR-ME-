@@ -94,8 +94,10 @@ lib/
     {"id": "h1", "text": "Вопрос", "answer": "Ответ"}
   ]
 }
-Минимум по 4 вопроса каждого уровня сложности.
 ```
+
+Минимум по 4 вопроса каждого уровня сложности.
+
 
 
 ## 🎨 Технологии
@@ -226,8 +228,10 @@ lib/
     {"id": "h1", "text": "Question", "answer": "Answer"}
   ]
 }
-Minimum of 4 questions per difficulty level.
 ```
+
+Minimum of 4 questions per difficulty level.
+
 
 ## 🎨 Technologies
 
