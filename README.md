@@ -156,7 +156,7 @@ A digital version of a party board game inspired by the "Loud Question" show by 
 
 - 📦 **10 built-in packs** with questions
 
-- 🛠️** Pack Builder** — create your own question sets right in the app
+- 🛠️**Pack Builder** — create your own question sets right in the app
 
 - 📥 **Pack Import** — upload .hmq files from other players
 
