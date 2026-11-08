@@ -117,7 +117,7 @@ lib/
 Данное приложение является фанатским некоммерческим проектом, созданным исключительно в развлекательных целях. Автор не претендует на интеллектуальную собственность оригинального шоу.
 
 Если вам понравился формат — поддержите оригинальное шоу "Громкий вопрос"!
-## 👤 Автор - ygb'baby
+## 👤 Автор - ygbnocap
 ------------------
 # 🎧 Hear Me?
 
@@ -249,4 +249,4 @@ The game concept is inspired by and borrowed from the improvisational show "Loud
 This application is a fan-made non-commercial project created purely for entertainment purposes. The author does not claim intellectual property rights to the original show and has no direct affiliation with it.
 
 If you enjoyed the format — support the original "Loud Question" show!
-## 👤 Author - ygb'baby
+## 👤 Author - ygbnocap
