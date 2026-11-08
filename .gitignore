@@ -8,3 +8,16 @@ build/
 .flutter-plugins-dependencies
 .kotlin/
 *.log
+
+# Local machine configuration and signing material
+**/local.properties
+**/key.properties
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Local audit evidence (reports remain on disk)
+/audit_reports/

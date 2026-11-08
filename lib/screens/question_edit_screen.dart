@@ -1,19 +1,16 @@
-// lib/screens/question_edit_screen.dart
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import '../theme/gameplay_theme.dart';
+import '../widgets/studio_components.dart';
 
 class QuestionEditScreen extends StatefulWidget {
   final String initialText;
   final String initialAnswer;
   final int questionNumber;
-
-  const QuestionEditScreen({
-    super.key,
-    required this.initialText,
-    required this.initialAnswer,
-    required this.questionNumber,
-  });
-
+  const QuestionEditScreen(
+      {super.key,
+      required this.initialText,
+      required this.initialAnswer,
+      required this.questionNumber});
   @override
   State<QuestionEditScreen> createState() => _QuestionEditScreenState();
 }
@@ -21,7 +18,11 @@ class QuestionEditScreen extends StatefulWidget {
 class _QuestionEditScreenState extends State<QuestionEditScreen> {
   late TextEditingController _textController;
   late TextEditingController _answerController;
-
+  bool _allowPop = false;
+  bool _confirming = false;
+  bool get _dirty =>
+      _textController.text != widget.initialText ||
+      _answerController.text != widget.initialAnswer;
   @override
   void initState() {
     super.initState();
@@ -36,114 +37,80 @@ class _QuestionEditScreenState extends State<QuestionEditScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: AppColors.bgGradient,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // App Bar
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 12, 16, 8),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      'Вопрос ${widget.questionNumber}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context, {
-                          'text': _textController.text,
-                          'answer': _answerController.text,
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accent,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        minimumSize: const Size(80, 36),
-                      ),
-                      child: const Text('Сохранить', style: TextStyle(fontSize: 14)),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(color: AppColors.muted, height: 0),
-              // Контент с возможностью скролла
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                  ),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _textController,
-                        style: const TextStyle(color: Colors.white, fontSize: 15),
-                        decoration: const InputDecoration(
-                          labelText: 'Вопрос',
-                          labelStyle: TextStyle(color: AppColors.muted, fontSize: 13),
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.muted),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.primary),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        ),
-                        maxLines: 4,
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _answerController,
-                        style: const TextStyle(color: Colors.white, fontSize: 15),
-                        decoration: const InputDecoration(
-                          labelText: 'Ответ',
-                          labelStyle: TextStyle(color: AppColors.muted, fontSize: 13),
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.muted),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.primary),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        ),
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  Future<void> _requestExit() async {
+    if (_confirming) return;
+    if (_dirty) {
+      _confirming = true;
+      final discard = await showDialog<bool>(
+          context: context,
+          builder: (context) => StudioTheme(
+                  child: AlertDialog(
+                title: const Text('Удалить изменения?'),
+                content: const Text('Несохранённые изменения будут потеряны.'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Продолжить редактирование')),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Выйти')),
+                ],
+              )));
+      _confirming = false;
+      if (!mounted || discard != true) return;
+    }
+    _finish();
   }
+
+  void _finish([Map<String, String>? result]) {
+    if (!mounted || _allowPop) return;
+    setState(() => _allowPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.pop(context, result);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: _allowPop || !_dirty,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop) _requestExit();
+        },
+        child: StudioPage(
+            maxWidth: 800,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  StudioHeader(
+                      title: 'Вопрос ${widget.questionNumber}',
+                      onBack: _requestExit),
+                  Align(
+                      alignment: Alignment.centerRight,
+                      child: FilledButton(
+                        onPressed: () => _finish({
+                          'text': _textController.text.trim(),
+                          'answer': _answerController.text.trim()
+                        }),
+                        child: const Text('Сохранить'),
+                      )),
+                  const SizedBox(height: 16),
+                  TextField(
+                      onChanged: (_) => setState(() {}),
+                      controller: _textController,
+                      style: const TextStyle(
+                          fontSize: 16, color: GameplayTheme.text),
+                      decoration: const InputDecoration(labelText: 'Вопрос'),
+                      minLines: 2,
+                      maxLines: 6),
+                  const SizedBox(height: 16),
+                  TextField(
+                      onChanged: (_) => setState(() {}),
+                      controller: _answerController,
+                      style: const TextStyle(
+                          fontSize: 16, color: GameplayTheme.text),
+                      decoration: const InputDecoration(labelText: 'Ответ'),
+                      minLines: 2,
+                      maxLines: 5),
+                ])),
+      );
 }
