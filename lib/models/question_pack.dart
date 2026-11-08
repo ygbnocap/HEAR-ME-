@@ -48,15 +48,36 @@ class QuestionPack {
   });
 
   List<Question> get allQuestions => [
-    ...easyQuestions,
-    ...mediumQuestions,
-    ...hardQuestions,
-  ];
+        ...easyQuestions,
+        ...mediumQuestions,
+        ...hardQuestions,
+      ];
+
+  // IDs become local filenames on import; reject path syntax on every platform.
+  static bool isSafeId(String id) {
+    if (id.trim().isEmpty ||
+        id == '.' ||
+        id == '..' ||
+        id.endsWith('.') ||
+        id.endsWith(' ') ||
+        RegExp(r'[\x00-\x1f\x7f<>:"/\\|?*]').hasMatch(id)) {
+      return false;
+    }
+    // Windows reserves these basenames even when an extension is appended.
+    final basename = id.split('.').first.toUpperCase();
+    return !RegExp(r'^(CON|PRN|AUX|NUL|COM[1-9¹²³]|LPT[1-9¹²³])$')
+        .hasMatch(basename);
+  }
 
   bool get isValid =>
+      isSafeId(id) &&
+      name.trim().isNotEmpty &&
       easyQuestions.length >= 4 &&
-          mediumQuestions.length >= 4 &&
-          hardQuestions.length >= 4;
+      mediumQuestions.length >= 4 &&
+      hardQuestions.length >= 4 &&
+      allQuestions.every((question) =>
+          question.text.trim().isNotEmpty &&
+          (question.answer == null || question.answer!.trim().isNotEmpty));
 
   factory QuestionPack.fromJson(Map<String, dynamic> json) {
     return QuestionPack(
@@ -66,13 +87,16 @@ class QuestionPack {
       description: json['description'] as String?,
       version: json['version'] as String? ?? '1.0',
       easyQuestions: (json['easy'] as List<dynamic>)
-          .map((q) => Question.fromJson(q as Map<String, dynamic>, Difficulty.easy))
+          .map((q) =>
+              Question.fromJson(q as Map<String, dynamic>, Difficulty.easy))
           .toList(),
       mediumQuestions: (json['medium'] as List<dynamic>)
-          .map((q) => Question.fromJson(q as Map<String, dynamic>, Difficulty.medium))
+          .map((q) =>
+              Question.fromJson(q as Map<String, dynamic>, Difficulty.medium))
           .toList(),
       hardQuestions: (json['hard'] as List<dynamic>)
-          .map((q) => Question.fromJson(q as Map<String, dynamic>, Difficulty.hard))
+          .map((q) =>
+              Question.fromJson(q as Map<String, dynamic>, Difficulty.hard))
           .toList(),
     );
   }
